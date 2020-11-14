@@ -1,0 +1,18 @@
+
+@url = http://localhost:5000/users
+
+
+### Get Users
+GET {{url}}
+
+### Get user
+GET {{url}}
+
+### Get user
+POST {{url}}
+Content-Type: application/json
+
+{
+    "Id": "{{$guid}}",
+    "Name": "Arvi"
+}
