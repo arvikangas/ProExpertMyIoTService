@@ -1,11 +1,10 @@
-﻿using MediatR;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace MyIoTService.Core.Commands
+namespace MyIoTService.Core.Dtos
 {
-    public class UpdateUser : IRequest
+    public class AccountDto
     {
         public Guid Id { get; set; }
         public string Name { get; set; }

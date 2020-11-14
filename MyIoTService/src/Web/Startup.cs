@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using MyIoTService.Core;
 using MyIoTService.Infrastructure;
 using MyIoTService.Infrastructure.EF;
+using MyIoTService.Core.Options;
 
 namespace MyIoTService.Web
 {
@@ -32,6 +33,8 @@ namespace MyIoTService.Web
             services.AddCore();
             services.AddInfrastructure();
             services.AddSwaggerGen();
+
+            services.Configure<MqttOptions>(Configuration.GetSection("mqtt"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

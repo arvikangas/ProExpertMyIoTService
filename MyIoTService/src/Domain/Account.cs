@@ -2,7 +2,7 @@
 
 namespace MyIoTService.Domain
 {
-    public class User
+    public class Account
     {
         public Guid Id { get; set; }
         public string Name { get; set; }

@@ -9,14 +9,14 @@ using System.Threading.Tasks;
 
 namespace MyIoTService.Core.Queries.Handlers
 {
-    public class CreateUserHandler : IRequestHandler<GetUser, UserDto>
+    public class CreateUserHandler : IRequestHandler<GetAccount, AccountDto>
     {
         public CreateUserHandler(MyIoTDbContext db)
         {
 
         }
 
-        public async Task<UserDto> Handle(GetUser request, CancellationToken cancellationToken)
+        public async Task<AccountDto> Handle(GetAccount request, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }

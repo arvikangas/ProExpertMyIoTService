@@ -7,12 +7,12 @@ using System.Text;
 
 namespace MyIoTService.Infrastructure.EF.Configurations
 {
-    public class UserConfiguration : IEntityTypeConfiguration<User>
+    public class AccountConfiguration : IEntityTypeConfiguration<Account>
     {
-        public void Configure(EntityTypeBuilder<User> builder)
+        public void Configure(EntityTypeBuilder<Account> builder)
         {
             builder
-                .ToTable("users");
+                .ToTable("accounts");
 
             builder
                 .HasKey(x => x.Id);

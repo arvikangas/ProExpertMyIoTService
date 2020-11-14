@@ -1,0 +1,18 @@
+
+@url = http://localhost:5000/accounts
+
+
+### Get accounts
+GET {{url}}
+
+### Get account
+GET {{url}}/6aa9dc50-ee96-4603-b031-ea3bd0487fe2
+
+### Create account
+POST {{url}}
+Content-Type: application/json
+
+{
+    "Id": "{{$guid}}",
+    "Name": "Arvi"
+}

@@ -12,18 +12,18 @@ using System.Threading.Tasks;
 
 namespace MyIoTService.Core.Commands.Handlers
 {
-    public class UpdateUserHandler : AsyncRequestHandler<UpdateUser>
+    public class UpdateAccountHandler : AsyncRequestHandler<UpdateAccount>
     {
         private readonly MyIoTDbContext _db;
 
-        public UpdateUserHandler(MyIoTDbContext db)
+        public UpdateAccountHandler(MyIoTDbContext db)
         {
             _db = db;
         }
 
-        protected async override Task Handle(UpdateUser request, CancellationToken cancellationToken)
+        protected async override Task Handle(UpdateAccount request, CancellationToken cancellationToken)
         {
-            var user = await _db.Users.FindAsync(request.Id);
+            var user = await _db.Accounts.FindAsync(request.Id);
             user.Name = request.Name;
             await _db.SaveChangesAsync();
         }

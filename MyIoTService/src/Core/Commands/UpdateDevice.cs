@@ -5,8 +5,9 @@ using System.Text;
 
 namespace MyIoTService.Core.Commands
 {
-    public class DeleteUser : IRequest
+    public class UpdateDevice : IRequest
     {
-        public Guid Id { get; set; }
+        public string Id { get; set; }
+        public bool Enabled { get; set; }
     }
 }

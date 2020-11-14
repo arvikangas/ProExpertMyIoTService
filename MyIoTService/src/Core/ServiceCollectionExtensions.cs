@@ -1,0 +1,24 @@
+﻿using MediatR;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using MyIoTService.Core.Options;
+using MyIoTService.Core.Services;
+using MyIoTService.Core.Services.Mqtt;
+using System.Reflection;
+
+namespace MyIoTService.Core
+{
+    public static class ServiceCollectionExtensions
+    {
+        public static IServiceCollection AddCore(this IServiceCollection services)
+        {
+            services.AddMediatR(Assembly.GetExecutingAssembly());
+
+            services.AddSingleton<IMqttService, MqttService>();
+
+            services.AddHostedService<BackgroundServiceStarter<IMqttService>>();
+
+            return services;
+        }
+    }
+}

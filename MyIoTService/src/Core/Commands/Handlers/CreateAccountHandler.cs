@@ -10,20 +10,20 @@ using System.Threading.Tasks;
 
 namespace MyIoTService.Core.Commands.Handlers
 {
-    public class CreateUserHandler : AsyncRequestHandler<CreateUser>
+    public class CreateAccountHandler : AsyncRequestHandler<CreateAccount>
     {
         private readonly MyIoTDbContext _db;
 
-        public CreateUserHandler(MyIoTDbContext db)
+        public CreateAccountHandler(MyIoTDbContext db)
         {
             _db = db;
         }
 
-        protected async override Task Handle(CreateUser request, CancellationToken cancellationToken)
+        protected async override Task Handle(CreateAccount request, CancellationToken cancellationToken)
         {
             await _db
-                .Users
-                .AddAsync(new Domain.User()
+                .Accounts
+                .AddAsync(new Domain.Account()
                 {
                     Id = request.Id,
                     Name = request.Name

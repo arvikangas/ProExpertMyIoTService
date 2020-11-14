@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace MyIoTService.Core.Queries.Handlers
 {
-    public class UpdateUserHandler : IRequestHandler<GetUsers, IEnumerable<UserDto>>
+    public class UpdateUserHandler : IRequestHandler<GetAccounts, IEnumerable<AccountDto>>
     {
         private readonly MyIoTDbContext _db;
 
@@ -20,10 +20,10 @@ namespace MyIoTService.Core.Queries.Handlers
             _db = db;
         }
 
-        public async Task<IEnumerable<UserDto>> Handle(GetUsers request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<AccountDto>> Handle(GetAccounts request, CancellationToken cancellationToken)
         {
-            var result = await _db.Users
-                .Select(x => new UserDto
+            var result = await _db.Accounts
+                .Select(x => new AccountDto
                 {
                     Id = x.Id,
                     Name = x.Name

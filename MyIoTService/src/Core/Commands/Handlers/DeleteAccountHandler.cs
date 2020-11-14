@@ -12,19 +12,19 @@ using System.Threading.Tasks;
 
 namespace MyIoTService.Core.Commands.Handlers
 {
-    public class DeleteUserHandler : AsyncRequestHandler<DeleteUser>
+    public class DeleteAccountHandler : AsyncRequestHandler<DeleteAccount>
     {
         private readonly MyIoTDbContext _db;
 
-        public DeleteUserHandler(MyIoTDbContext db)
+        public DeleteAccountHandler(MyIoTDbContext db)
         {
             _db = db;
         }
 
-        protected async override Task Handle(DeleteUser request, CancellationToken cancellationToken)
+        protected async override Task Handle(DeleteAccount request, CancellationToken cancellationToken)
         {
-            var user = await _db.Users.FindAsync(request.Id);
-            _db.Users.Remove(user);
+            var user = await _db.Accounts.FindAsync(request.Id);
+            _db.Accounts.Remove(user);
             await _db.SaveChangesAsync();
         }
     }

@@ -11,12 +11,12 @@ using MyIoTService.Core.Queries;
 namespace MyIoTService.Web.Controllers
 {
     [ApiController]
-    [Route("users")]
-    public class UsersController : ControllerBase
+    [Route("accounts")]
+    public class AccountsController : ControllerBase
     {
         private readonly IMediator _mediator;
 
-        public UsersController(IMediator mediator)
+        public AccountsController(IMediator mediator)
         {
             _mediator = mediator;
         }
@@ -24,27 +24,27 @@ namespace MyIoTService.Web.Controllers
         [HttpGet]
         public async Task<ActionResult> Get()
         {
-            var result = await _mediator.Send(new GetUsers());
+            var result = await _mediator.Send(new GetAccounts());
             return Ok(result);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult> Get(Guid id)
         {
-            var result = await _mediator.Send(new GetUser() { Id = id });
+            var result = await _mediator.Send(new GetAccount() { Id = id });
             return Ok(result);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> Put([FromRoute]Guid id, [FromBody]UpdateUser command)
+        public async Task<ActionResult> Put([FromRoute]Guid id, [FromBody]UpdateAccount command)
         {
             command.Id = id;
-            await _mediator.Send(new GetUser() { Id = id });
+            await _mediator.Send(new GetAccount() { Id = id });
             return NoContent();
         }
 
         [HttpPost()]
-        public async Task<ActionResult> Post(CreateUser command)
+        public async Task<ActionResult> Post(CreateAccount command)
         {
             command.Id = Guid.NewGuid();
             await _mediator.Send(command);
@@ -54,7 +54,7 @@ namespace MyIoTService.Web.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(Guid id)
         {
-            var command = new DeleteUser { Id = id };
+            var command = new DeleteAccount { Id = id };
             await _mediator.Send(command);
             return NoContent();
         }

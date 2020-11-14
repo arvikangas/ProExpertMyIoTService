@@ -6,7 +6,7 @@ using System.Text;
 
 namespace MyIoTService.Core.Queries
 {
-    public class GetUsers : IRequest<IEnumerable<UserDto>>
+    public class GetAccounts : IRequest<IEnumerable<AccountDto>>
     {
     }
 }

@@ -14,11 +14,15 @@ namespace MyIoTService.Infrastructure.EF
         {
         }
 
-        public DbSet<User> Users { get; set; }
+        public DbSet<Account> Accounts { get; set; }
+        public DbSet<Device> Devices { get; set; }
+        public DbSet<AccountDevice> AccountDevices { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfiguration(new UserConfiguration());
+            modelBuilder.ApplyConfiguration(new AccountConfiguration());
+            modelBuilder.ApplyConfiguration(new AccountDeviceConfiguration());
+            modelBuilder.ApplyConfiguration(new DeviceConfiguration());
         }
     }
 }

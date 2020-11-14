@@ -1,0 +1,18 @@
+
+@url = http://localhost:5000/devices
+
+
+### Get Devices
+GET {{url}}
+
+### Get Devices
+GET {{url}}/device1
+
+### Create device
+POST {{url}}
+Content-Type: application/json
+
+{
+    "Id": "device1",
+    "AccountId": "425e8e93-d9f3-4bd1-b471-fd0a3431c846"
+}
