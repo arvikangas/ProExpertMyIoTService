@@ -33,7 +33,7 @@ namespace MyIoTService.Core.Commands.Handlers
             var topics = request.Topic.Split('/');
 
             // Topic format is devices/{deviceId}/{dataType}
-            if (topics.Length != 3)
+            if (topics.Length != 4)
             {
                 _logger.LogInformation("Unsupported topic format. {Topic}", request.Topic);
                 return;
@@ -41,7 +41,7 @@ namespace MyIoTService.Core.Commands.Handlers
             }
 
             var deviceId = topics[1];
-            var dataTypeString = topics[2];
+            var dataTypeString = topics[3];
 
             int dataType;
             if (!int.TryParse(dataTypeString, out dataType))
@@ -88,7 +88,7 @@ namespace MyIoTService.Core.Commands.Handlers
 
             _db.DeviceDataIncoming.Add(entry);
 
-            switch(payLoad)
+            switch(dataType)
             {
                 case 1000: device.InsideTemperature = payLoad; break;
                 case 1001: device.OutsideTemperature = payLoad; break;

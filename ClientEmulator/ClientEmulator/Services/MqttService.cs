@@ -1,5 +1,6 @@
-﻿using MediatR;
-using Microsoft.EntityFrameworkCore;
+﻿using ClientEmulator.Hubs;
+using MediatR;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -7,26 +8,20 @@ using Microsoft.Extensions.Options;
 using MQTTnet;
 using MQTTnet.Client.Options;
 using MQTTnet.Extensions.ManagedClient;
-using MyIoTService.Core.Commands;
-using MyIoTService.Core.Options;
-using MyIoTService.Core.Queries;
-using MyIoTService.Infrastructure.EF;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MyIoTService.Core.Services.Mqtt
+namespace ClientEmulator.Services
 {
     public class MqttService : IMqttService
     {
         private readonly IManagedMqttClient _client;
         private readonly MqttOptions _mqttOptions;
-        private readonly IMediator _mediator;
         private readonly IServiceScopeFactory _serviceScopeFactory;
-
+        private readonly IMediator _mediator;
         private readonly ILogger<MqttService> _logger;
 
         public MqttService(
@@ -38,6 +33,7 @@ namespace MyIoTService.Core.Services.Mqtt
             _mqttOptions = mqttOptions.Value;
             _logger = logger;
             _mediator = mediator;
+
             _serviceScopeFactory = serviceScopeFactory;
             _client = new MqttFactory().CreateManagedMqttClient();
         }
@@ -47,6 +43,7 @@ namespace MyIoTService.Core.Services.Mqtt
             _logger.LogInformation("MqttService starting");
             await InitializeClient();
             _logger.LogInformation("MqttService started");
+            await SubscribeTopic($"{_mqttOptions.DevicesTopic}/+/receive/#");
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)
@@ -57,11 +54,6 @@ namespace MyIoTService.Core.Services.Mqtt
         public async Task SubscribeTopic(string topic)
         {
             await _client.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic(topic).Build());
-        }
-
-        public async Task SubscribeDevice(string topic)
-        {
-            await _client.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic(GetTopic(topic)).Build());
         }
 
         public async Task UnSubscribeTopic(string topic)
@@ -82,21 +74,26 @@ namespace MyIoTService.Core.Services.Mqtt
 
             await _client.StartAsync(options);
 
-            _client.UseApplicationMessageReceivedHandler(async e =>
+            _client.UseApplicationMessageReceivedHandler(e =>
             {
-                await HandleMqttMessage(e);
+                HandleMqttMessage(e);
             });
         }
 
-        private async Task HandleMqttMessage(MqttApplicationMessageReceivedEventArgs e)
+        private void HandleMqttMessage(MqttApplicationMessageReceivedEventArgs e)
         {
             using (var scope = _serviceScopeFactory.CreateScope())
             {
-                var mediator = scope.ServiceProvider.GetService<IMediator>();
-                await mediator.Send(new HandleMqttMessage { Topic = e.ApplicationMessage.Topic, Payload = e.ApplicationMessage.Payload });
+                var hub = scope.ServiceProvider.GetService<IHubContext<MqttHub>>();
+                var topics = e.ApplicationMessage.Topic.Split('/');
+                hub.Clients.All.SendAsync("Receive", topics[1], topics[2], e.ApplicationMessage.Payload);
             }
         }
 
-        string GetTopic(string deviceId) => $"{_mqttOptions.DevicesTopic}/{deviceId}/send/#";
+        public async Task Send(string device, string dataType, string payload)
+        {
+            var topic = $"{_mqttOptions.DevicesTopic}/{device}/send/{dataType}";
+            await _client.PublishAsync(new MqttApplicationMessageBuilder().WithTopic(topic).WithPayload(payload).Build());
+        }
     }
 }

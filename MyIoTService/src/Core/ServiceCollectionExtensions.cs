@@ -12,12 +12,11 @@ namespace MyIoTService.Core
     {
         public static IServiceCollection AddCore(this IServiceCollection services)
         {
-            services.AddMediatR(Assembly.GetExecutingAssembly());
-
             services.AddSingleton<IMqttService, MqttService>();
 
             services.AddHostedService<BackgroundServiceStarter<IMqttService>>();
             services.AddHostedService<Initializer>();
+            services.AddMediatR(Assembly.GetExecutingAssembly());
 
             return services;
         }
