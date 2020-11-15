@@ -11,6 +11,7 @@ using MQTTnet.Extensions.ManagedClient;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -86,7 +87,7 @@ namespace ClientEmulator.Services
             {
                 var hub = scope.ServiceProvider.GetService<IHubContext<MqttHub>>();
                 var topics = e.ApplicationMessage.Topic.Split('/');
-                hub.Clients.All.SendAsync("Receive", topics[1], topics[2], e.ApplicationMessage.Payload);
+                hub.Clients.All.SendAsync("Receive", topics[1], topics[3], Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
             }
         }
 

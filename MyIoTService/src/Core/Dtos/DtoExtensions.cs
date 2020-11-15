@@ -35,5 +35,15 @@ namespace MyIoTService.Core.Dtos
                 Value = data.Value
             };
         }
+
+        public static DeviceDataDto ToDto(this DeviceDataOutgoing data)
+        {
+            return new DeviceDataDto
+            {
+                DataType = data.DataType,
+                TimeStamp = data.TimeStamp,
+                Value = data.Value
+            };
+        }
     }
 }

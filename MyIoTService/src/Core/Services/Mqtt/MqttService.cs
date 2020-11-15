@@ -61,7 +61,8 @@ namespace MyIoTService.Core.Services.Mqtt
 
         public async Task SubscribeDevice(string topic)
         {
-            await _client.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic(GetTopic(topic)).Build());
+            var topicCombined = $"{_mqttOptions.DevicesTopic}/{topic}/send/#";
+            await _client.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic(topicCombined).Build());
         }
 
         public async Task UnSubscribeTopic(string topic)
@@ -98,5 +99,11 @@ namespace MyIoTService.Core.Services.Mqtt
         }
 
         string GetTopic(string deviceId) => $"{_mqttOptions.DevicesTopic}/{deviceId}/send/#";
+
+        public async Task Send(string deviceId, int dataType, string payload)
+        {
+            var topic = $"{_mqttOptions.DevicesTopic}/{deviceId}/receive/{dataType}";
+            await _client.PublishAsync(new MqttApplicationMessageBuilder().WithTopic(topic).WithPayload(payload).Build());
+        }
     }
 }

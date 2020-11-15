@@ -11,5 +11,6 @@ namespace MyIoTService.Core.Services.Mqtt
         Task SubscribeTopic(string topic);
         Task SubscribeDevice(string topic);
         Task UnSubscribeTopic(string topic);
+        Task Send(string deviceId, int dataType, string payload);
     }
 }

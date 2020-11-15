@@ -16,7 +16,6 @@ namespace MyIoTService.Core.Commands
         public int? WorkingHour { get; set; }
         public bool? IsOperational { get; set; }
         public bool? SilentMode { get; set; }
-        public bool? MachineIsBroken { get; set; }
         public int? SerialNumber { get; set; }
     }
 }

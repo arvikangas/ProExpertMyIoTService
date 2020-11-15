@@ -1,1 +1,2 @@
 dotnet ef migrations add Initial --output-dir EF/Migrations --context MyIoTDbContext --startup-project ../Web/Web.csproj
+dotnet ef database update --context MyIoTDbContext --startup-project ../Web/Web.csproj
