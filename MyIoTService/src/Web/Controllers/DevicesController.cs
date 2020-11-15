@@ -50,5 +50,19 @@ namespace MyIoTService.Web.Controllers
             return Created($"/devices/{command.Id}", null);
         }
 
+        [HttpGet("history-incoming/{id}")]
+        public async Task<ActionResult> GetHistoryIncoming([FromRoute] string id, DateTime? from, DateTime? to)
+        {
+            var result = await _mediator.Send(new GetDeviceDataIncomingHistory() { Id = id, From = from, To = to });
+            return Ok(result);
+        }
+
+        [HttpGet("history-outgoing/{id}")]
+        public async Task<ActionResult> GetHistoryOutgoing([FromRoute] string id, DateTime? from, DateTime? to)
+        {
+            var result = await _mediator.Send(new GetDeviceDataIncomingHistory() { Id = id, From = from, To = to });
+            return Ok(result);
+        }
+
     }
 }

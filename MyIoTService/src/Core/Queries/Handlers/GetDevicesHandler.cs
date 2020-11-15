@@ -24,11 +24,7 @@ namespace MyIoTService.Core.Queries.Handlers
         {
             var devices = await _db
                 .Devices
-                .Select(x => new DeviceDto
-                {
-                    Id = x.Id,
-                    Enabled = x.Enabled
-                })
+                .Select(x => x.ToDto())
                 .ToListAsync();
 
             return devices;

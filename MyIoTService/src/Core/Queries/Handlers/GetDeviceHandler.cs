@@ -20,12 +20,8 @@ namespace MyIoTService.Core.Queries.Handlers
 
         public async Task<DeviceDto> Handle(GetDevice request, CancellationToken cancellationToken)
         {
-            var result = _db.Devices.Find(request.Id);
-            return new DeviceDto
-            {
-                Id = result.Id,
-                Enabled = result.Enabled
-            };
+            var result = await _db.Devices.FindAsync(request.Id);
+            return result.ToDto();
         }
     }
 }
