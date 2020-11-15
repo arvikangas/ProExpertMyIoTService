@@ -10,10 +10,7 @@ namespace MyIoTService.Domain
         public Device Device { get; set; }
 
         public DateTime TimeStamp { get; set; }
-
-        public int DataTypeId { get; set; }
-        public DataType DataType { get; set; }
-
-        public int Value { get; set; }
+        public int DataType { get; set; }
+        public int? Value { get; set; }
     }
 }

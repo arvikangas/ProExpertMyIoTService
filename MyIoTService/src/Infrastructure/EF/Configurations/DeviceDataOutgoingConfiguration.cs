@@ -15,17 +15,12 @@ namespace MyIoTService.Infrastructure.EF.Configurations
                 .ToTable("device_data_outgoing");
 
             builder
-                .HasKey(x => new { x.DeviceId, x.TimeStamp, x.DataTypeId });
+                .HasKey(x => new { x.DeviceId, x.TimeStamp, x.DataType });
 
             builder
                 .HasOne(x => x.Device)
                 .WithMany()
                 .HasForeignKey(x => x.DeviceId);
-
-            builder
-                .HasOne(x => x.DataType)
-                .WithMany()
-                .HasForeignKey(x => x.DataTypeId);
 
             builder
                 .Property(x => x.TimeStamp)

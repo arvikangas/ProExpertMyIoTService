@@ -10,8 +10,8 @@ using MyIoTService.Infrastructure.EF;
 namespace MyIoTService.Infrastructure.EF.Migrations
 {
     [DbContext(typeof(MyIoTDbContext))]
-    [Migration("20201115075350_AddDeviceData")]
-    partial class AddDeviceData
+    [Migration("20201115174233_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -51,27 +51,6 @@ namespace MyIoTService.Infrastructure.EF.Migrations
                     b.ToTable("accountdevices");
                 });
 
-            modelBuilder.Entity("MyIoTService.Domain.DataType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("RangeFrom")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RangeTo")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("datatypes");
-                });
-
             modelBuilder.Entity("MyIoTService.Domain.Device", b =>
                 {
                     b.Property<string>("Id")
@@ -79,6 +58,36 @@ namespace MyIoTService.Infrastructure.EF.Migrations
 
                     b.Property<bool>("Enabled")
                         .HasColumnType("bit");
+
+                    b.Property<bool>("HasOutsideTemperatureSensor")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("InsideTemperature")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsOperational")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("MachineIsBroken")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("OperationTimeInSec")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OutsideTemperature")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SerialNumber")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("SilentMode")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("WaterTemperature")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WorkingHour")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -93,15 +102,13 @@ namespace MyIoTService.Infrastructure.EF.Migrations
                     b.Property<DateTime>("TimeStamp")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("DataTypeId")
+                    b.Property<int>("DataType")
                         .HasColumnType("int");
 
-                    b.Property<int>("Value")
+                    b.Property<int?>("Value")
                         .HasColumnType("int");
 
-                    b.HasKey("DeviceId", "TimeStamp", "DataTypeId");
-
-                    b.HasIndex("DataTypeId");
+                    b.HasKey("DeviceId", "TimeStamp", "DataType");
 
                     b.ToTable("device_data_incoming");
                 });
@@ -114,15 +121,13 @@ namespace MyIoTService.Infrastructure.EF.Migrations
                     b.Property<DateTime>("TimeStamp")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("DataTypeId")
+                    b.Property<int>("DataType")
                         .HasColumnType("int");
 
-                    b.Property<int>("Value")
+                    b.Property<int?>("Value")
                         .HasColumnType("int");
 
-                    b.HasKey("DeviceId", "TimeStamp", "DataTypeId");
-
-                    b.HasIndex("DataTypeId");
+                    b.HasKey("DeviceId", "TimeStamp", "DataType");
 
                     b.ToTable("device_data_outgoing");
                 });
@@ -148,38 +153,22 @@ namespace MyIoTService.Infrastructure.EF.Migrations
 
             modelBuilder.Entity("MyIoTService.Domain.DeviceDataIncoming", b =>
                 {
-                    b.HasOne("MyIoTService.Domain.DataType", "DataType")
-                        .WithMany()
-                        .HasForeignKey("DataTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("MyIoTService.Domain.Device", "Device")
                         .WithMany()
                         .HasForeignKey("DeviceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("DataType");
 
                     b.Navigation("Device");
                 });
 
             modelBuilder.Entity("MyIoTService.Domain.DeviceDataOutgoing", b =>
                 {
-                    b.HasOne("MyIoTService.Domain.DataType", "DataType")
-                        .WithMany()
-                        .HasForeignKey("DataTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("MyIoTService.Domain.Device", "Device")
                         .WithMany()
                         .HasForeignKey("DeviceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("DataType");
 
                     b.Navigation("Device");
                 });

@@ -1,10 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MQTTnet;
 using MQTTnet.Client.Options;
 using MQTTnet.Extensions.ManagedClient;
+using MyIoTService.Core.Commands;
 using MyIoTService.Core.Options;
 using MyIoTService.Infrastructure.EF;
 using System;
@@ -20,17 +23,22 @@ namespace MyIoTService.Core.Services.Mqtt
     {
         private readonly IManagedMqttClient _client;
         private readonly MqttOptions _mqttOptions;
+        private readonly IMediator _mediator;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
 
         private readonly ILogger<MqttService> _logger;
 
         public MqttService(
             IOptions<MqttOptions> mqttOptions,
-            ILogger<MqttService> logger)
+            ILogger<MqttService> logger,
+            IMediator mediator,
+            IServiceScopeFactory serviceScopeFactory)
         {
             _mqttOptions = mqttOptions.Value;
             _logger = logger;
+            _mediator = mediator;
+            _serviceScopeFactory = serviceScopeFactory;
             _client = new MqttFactory().CreateManagedMqttClient();
-
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -75,13 +83,17 @@ namespace MyIoTService.Core.Services.Mqtt
 
             _client.UseApplicationMessageReceivedHandler(e =>
             {
-                Console.WriteLine("### RECEIVED APPLICATION MESSAGE ###");
-                Console.WriteLine($"+ Topic = {e.ApplicationMessage.Topic}");
-                Console.WriteLine($"+ Payload = {Encoding.UTF8.GetString(e.ApplicationMessage.Payload)}");
-                Console.WriteLine($"+ QoS = {e.ApplicationMessage.QualityOfServiceLevel}");
-                Console.WriteLine($"+ Retain = {e.ApplicationMessage.Retain}");
-                Console.WriteLine();
+                HandleMqttMessage(e);
             });
+        }
+
+        private void HandleMqttMessage(MqttApplicationMessageReceivedEventArgs e)
+        {
+            using (var scope = _serviceScopeFactory.CreateScope())
+            {
+                var mediator = scope.ServiceProvider.GetService<IMediator>();
+                _mediator.Send(new HandleMqttMessage { Topic = e.ApplicationMessage.Topic, Payload = e.ApplicationMessage.Payload });
+            }
         }
 
         string GetTopic(string deviceId) => $"{_mqttOptions.DevicesTopic}/{deviceId}/#";

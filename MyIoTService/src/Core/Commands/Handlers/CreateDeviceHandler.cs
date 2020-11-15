@@ -28,7 +28,8 @@ namespace MyIoTService.Core.Commands.Handlers
                 .Devices
                 .AddAsync(new Domain.Device()
                 {
-                    Id = request.Id
+                    Id = request.Id,
+                    Enabled = request.Enabled
                 });
 
             await _db
@@ -41,7 +42,10 @@ namespace MyIoTService.Core.Commands.Handlers
 
             await _db.SaveChangesAsync();
 
-            await _mqttService.SubscribeTopic(request.Id);
+            if (request.Enabled)
+            {
+                await _mqttService.SubscribeDevice(request.Id);
+            }
         }
     }
 }
