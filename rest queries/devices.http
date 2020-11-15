@@ -13,6 +13,15 @@ POST {{url}}
 Content-Type: application/json
 
 {
-    "Id": "device1",
-    "AccountId": "425e8e93-d9f3-4bd1-b471-fd0a3431c846"
+    "Id": "device3",
+    "AccountId": "f24c5595-5e25-42e2-ab8c-70d932fb3176"
+}
+
+### Update device
+PUT {{url}}
+Content-Type: application/json
+
+{
+    "Id": "device3",
+    "Enabled": true
 }

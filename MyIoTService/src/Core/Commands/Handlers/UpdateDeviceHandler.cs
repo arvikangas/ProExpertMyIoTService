@@ -11,37 +11,28 @@ using System.Threading.Tasks;
 
 namespace MyIoTService.Core.Commands.Handlers
 {
-    public class UpdateDeviceHandler : AsyncRequestHandler<CreateDevice>
+    public class UpdateDeviceHandler : AsyncRequestHandler<UpdateDevice>
     {
         private readonly MyIoTDbContext _db;
         private readonly IMqttService _mqttService;
 
-        public CreateDeviceHandler(MyIoTDbContext db, IMqttService mqttService)
+        public UpdateDeviceHandler(MyIoTDbContext db, IMqttService mqttService)
         {
             _db = db;
             _mqttService = mqttService;
         }
 
-        protected async override Task Handle(CreateDevice request, CancellationToken cancellationToken)
+        protected async override Task Handle(UpdateDevice request, CancellationToken cancellationToken)
         {
-            await _db
-                .Devices
-                .AddAsync(new Domain.Device()
-                {
-                    Id = request.Id
-                });
+            var device = await _db.Devices.FindAsync(request.Id);
 
-            await _db
-                .AccountDevices
-                .AddAsync(new Domain.AccountDevice
-                {
-                    DeviceId = request.Id,
-                    AccountId = request.AccountId
-                });
-
+            device.Enabled = request.Enabled;
             await _db.SaveChangesAsync();
 
-            await _mqttService.SubscribeTopic(request.Id);
+            if(device.Enabled)
+            {
+                await _mqttService.SubscribeDevice(device.Id);
+            }
         }
     }
 }

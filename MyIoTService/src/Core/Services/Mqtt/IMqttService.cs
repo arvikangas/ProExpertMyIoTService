@@ -9,6 +9,7 @@ namespace MyIoTService.Core.Services.Mqtt
     public interface IMqttService : IHostedService
     {
         Task SubscribeTopic(string topic);
+        Task SubscribeDevice(string topic);
         Task UnSubscribeTopic(string topic);
     }
 }

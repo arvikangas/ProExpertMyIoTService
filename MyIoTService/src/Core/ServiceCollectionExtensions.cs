@@ -17,6 +17,7 @@ namespace MyIoTService.Core
             services.AddSingleton<IMqttService, MqttService>();
 
             services.AddHostedService<BackgroundServiceStarter<IMqttService>>();
+            services.AddHostedService<Initializer>();
 
             return services;
         }

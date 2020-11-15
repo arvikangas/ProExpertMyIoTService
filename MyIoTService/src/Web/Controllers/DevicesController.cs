@@ -24,22 +24,22 @@ namespace MyIoTService.Web.Controllers
         [HttpGet]
         public async Task<ActionResult> Get()
         {
-            var result = await _mediator.Send(new GetAccounts());
+            var result = await _mediator.Send(new GetDevices());
             return Ok(result);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult> Get(Guid id)
+        public async Task<ActionResult> Get(string id)
         {
-            var result = await _mediator.Send(new GetAccount() { Id = id });
+            var result = await _mediator.Send(new GetDevice() { Id = id });
             return Ok(result);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> Put([FromRoute]Guid id, [FromBody]UpdateAccount command)
+        public async Task<ActionResult> Put([FromRoute]string id, [FromBody]UpdateDevice command)
         {
             command.Id = id;
-            await _mediator.Send(new GetAccount() { Id = id });
+            await _mediator.Send(command);
             return NoContent();
         }
 

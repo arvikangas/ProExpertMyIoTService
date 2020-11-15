@@ -1,11 +1,15 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MQTTnet;
 using MQTTnet.Client.Options;
 using MQTTnet.Extensions.ManagedClient;
 using MyIoTService.Core.Options;
+using MyIoTService.Infrastructure.EF;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,35 +19,25 @@ namespace MyIoTService.Core.Services.Mqtt
     public class MqttService : IMqttService
     {
         private readonly IManagedMqttClient _client;
-        private readonly ManagedMqttClientOptions _options;
+        private readonly MqttOptions _mqttOptions;
 
-        public MqttService(IOptions<MqttOptions> mqttOptions)
+        private readonly ILogger<MqttService> _logger;
+
+        public MqttService(
+            IOptions<MqttOptions> mqttOptions,
+            ILogger<MqttService> logger)
         {
-            // Setup and start a managed MQTT client.
-            _options = new ManagedMqttClientOptionsBuilder()
-                .WithAutoReconnectDelay(TimeSpan.FromSeconds(5))
-                .WithClientOptions(new MqttClientOptionsBuilder()
-                    .WithClientId(mqttOptions.Value.ClientId)
-                    .WithTcpServer(mqttOptions.Value.Server, 1883)
-                    .Build())
-                .Build();
-
+            _mqttOptions = mqttOptions.Value;
+            _logger = logger;
             _client = new MqttFactory().CreateManagedMqttClient();
 
-            _client.UseApplicationMessageReceivedHandler(e =>
-            {
-                Console.WriteLine("### RECEIVED APPLICATION MESSAGE ###");
-                Console.WriteLine($"+ Topic = {e.ApplicationMessage.Topic}");
-                Console.WriteLine($"+ Payload = {Encoding.UTF8.GetString(e.ApplicationMessage.Payload)}");
-                Console.WriteLine($"+ QoS = {e.ApplicationMessage.QualityOfServiceLevel}");
-                Console.WriteLine($"+ Retain = {e.ApplicationMessage.Retain}");
-                Console.WriteLine();
-            });
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            await _client.StartAsync(_options);
+            _logger.LogInformation("MqttService starting");
+            await InitializeClient();
+            _logger.LogInformation("MqttService started");
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)
@@ -56,9 +50,40 @@ namespace MyIoTService.Core.Services.Mqtt
             await _client.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic(topic).Build());
         }
 
+        public async Task SubscribeDevice(string topic)
+        {
+            await _client.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic(GetTopic(topic)).Build());
+        }
+
         public async Task UnSubscribeTopic(string topic)
         {
             await _client.UnsubscribeAsync(topic);
         }
+
+        private async Task InitializeClient()
+        {
+            var options = new ManagedMqttClientOptionsBuilder()
+                            .WithAutoReconnectDelay(TimeSpan.FromSeconds(5))
+                            .WithClientOptions(new MqttClientOptionsBuilder()
+                                .WithClientId(_mqttOptions.ClientId)
+                                .WithTcpServer(_mqttOptions.Server)
+                                .Build())
+                            .Build();
+
+
+            await _client.StartAsync(options);
+
+            _client.UseApplicationMessageReceivedHandler(e =>
+            {
+                Console.WriteLine("### RECEIVED APPLICATION MESSAGE ###");
+                Console.WriteLine($"+ Topic = {e.ApplicationMessage.Topic}");
+                Console.WriteLine($"+ Payload = {Encoding.UTF8.GetString(e.ApplicationMessage.Payload)}");
+                Console.WriteLine($"+ QoS = {e.ApplicationMessage.QualityOfServiceLevel}");
+                Console.WriteLine($"+ Retain = {e.ApplicationMessage.Retain}");
+                Console.WriteLine();
+            });
+        }
+
+        string GetTopic(string deviceId) => $"{_mqttOptions.DevicesTopic}/{deviceId}/#";
     }
 }

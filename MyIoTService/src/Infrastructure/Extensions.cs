@@ -10,7 +10,7 @@ namespace MyIoTService.Infrastructure
         public static IServiceCollection AddInfrastructure(this IServiceCollection services)
         {
             services.AddDbContext<MyIoTDbContext>(options =>
-                options.UseSqlServer("Server=localhost,1433;Database=iot;User=sa;Password=Your_password123;"));
+                options.UseSqlServer("Server=localhost,1433;Database=iot;User=sa;Password=Your_password123;", o => o.MigrationsAssembly("MyIoTService.Infrastructure")));
 
             return services;
         }

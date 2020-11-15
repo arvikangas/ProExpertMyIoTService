@@ -16,10 +16,12 @@ namespace MyIoTService.Infrastructure.EF.Configurations
 
             builder
                 .HasKey(x => new { x.AccountId, x.DeviceId });
+
             builder
                 .HasOne(x => x.Account)
                 .WithMany()
                 .HasForeignKey(x => x.AccountId);
+
             builder
                 .HasOne(x => x.Device)
                 .WithMany()

@@ -8,5 +8,6 @@ namespace MyIoTService.Core.Options
     {
         public string ClientId { get; set; }
         public string Server { get; set; }
+        public string DevicesTopic { get; set; }
     }
 }
