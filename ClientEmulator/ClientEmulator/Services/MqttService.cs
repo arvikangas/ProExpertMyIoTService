@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MQTTnet;
+using MQTTnet.Client.Connecting;
 using MQTTnet.Client.Options;
 using MQTTnet.Extensions.ManagedClient;
 using System;
@@ -37,14 +38,32 @@ namespace ClientEmulator.Services
 
             _serviceScopeFactory = serviceScopeFactory;
             _client = new MqttFactory().CreateManagedMqttClient();
+
+            _client.UseApplicationMessageReceivedHandler(e =>
+            {
+                HandleMqttMessage(e);
+            });
+
+            _client.UseConnectedHandler(e =>
+            {
+                HandleMqttConnected(e);
+            });
         }
 
-        public async Task StartAsync(CancellationToken cancellationToken)
+        public async Task Connect(string deviceId, string password)
         {
-            _logger.LogInformation("MqttService starting");
-            await InitializeClient();
-            _logger.LogInformation("MqttService started");
-            await SubscribeTopic($"{_mqttOptions.DevicesTopic}/+/receive/#");
+            var options = new ManagedMqttClientOptionsBuilder()
+                            .WithAutoReconnectDelay(TimeSpan.FromSeconds(5))
+                            .WithClientOptions(new MqttClientOptionsBuilder()
+                                .WithClientId(_mqttOptions.ClientId)
+                                .WithTcpServer(_mqttOptions.Server)
+                                .WithCredentials(deviceId, password)
+                                .Build())
+                            .Build();
+
+
+            await _client.StartAsync(options);
+            await SubscribeTopic($"{_mqttOptions.DevicesTopic}/{deviceId}/receive/#");
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)
@@ -62,25 +81,6 @@ namespace ClientEmulator.Services
             await _client.UnsubscribeAsync(topic);
         }
 
-        private async Task InitializeClient()
-        {
-            var options = new ManagedMqttClientOptionsBuilder()
-                            .WithAutoReconnectDelay(TimeSpan.FromSeconds(5))
-                            .WithClientOptions(new MqttClientOptionsBuilder()
-                                .WithClientId(_mqttOptions.ClientId)
-                                .WithTcpServer(_mqttOptions.Server)
-                                .Build())
-                            .Build();
-
-
-            await _client.StartAsync(options);
-
-            _client.UseApplicationMessageReceivedHandler(e =>
-            {
-                HandleMqttMessage(e);
-            });
-        }
-
         private void HandleMqttMessage(MqttApplicationMessageReceivedEventArgs e)
         {
             using (var scope = _serviceScopeFactory.CreateScope())
@@ -91,10 +91,24 @@ namespace ClientEmulator.Services
             }
         }
 
+        private void HandleMqttConnected(MqttClientConnectedEventArgs e)
+        {
+            using (var scope = _serviceScopeFactory.CreateScope())
+            {
+                var hub = scope.ServiceProvider.GetService<IHubContext<MqttHub>>();
+                hub.Clients.All.SendAsync("Connected", e.AuthenticateResult.ResultCode.ToString());
+            }
+        }
+
         public async Task Send(string device, string dataType, string payload)
         {
             var topic = $"{_mqttOptions.DevicesTopic}/{device}/send/{dataType}";
             await _client.PublishAsync(new MqttApplicationMessageBuilder().WithTopic(topic).WithPayload(payload).Build());
+        }
+
+        public bool IsConnected()
+        {
+            return _client.IsConnected;
         }
     }
 }

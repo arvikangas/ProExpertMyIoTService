@@ -32,8 +32,9 @@ namespace ClientEmulator
             services.AddMediatR(Assembly.GetExecutingAssembly());
             services.Configure<MqttOptions>(Configuration.GetSection("mqtt"));
             services.AddSingleton<IMqttService, MqttService>();
-
-            services.AddHostedService<BackgroundServiceStarter<IMqttService>>();
+            services.AddSingleton<DeviceState>();
+            services.AddHostedService<ClientUpdateScheduler>();
+            services.AddHostedService<ClientStateScheduler>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

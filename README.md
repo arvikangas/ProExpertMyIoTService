@@ -9,8 +9,7 @@
 * All services hosted in docker (todo for MyIoTService and Client emulator)
 
 ### TODO
-* Scheduled task on client emulator to update data periodically and send it. (For now its only from client emulator ui)
-* User and Client (device) authentication
+* Client (device) authentication
 * Dockerise MyIoTService and client emulator
 
 ### To Run
