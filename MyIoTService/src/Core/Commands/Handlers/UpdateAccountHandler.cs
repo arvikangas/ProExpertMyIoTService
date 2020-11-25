@@ -24,7 +24,7 @@ namespace MyIoTService.Core.Commands.Handlers
         protected async override Task Handle(UpdateAccount request, CancellationToken cancellationToken)
         {
             var user = await _db.Accounts.FindAsync(request.Id);
-            user.Name = request.Name;
+            user.UserName = request.Name;
             await _db.SaveChangesAsync();
         }
     }

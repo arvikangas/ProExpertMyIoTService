@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MyIoTService.Core.Commands;
@@ -12,6 +14,7 @@ namespace MyIoTService.Web.Controllers
 {
     [ApiController]
     [Route("devices")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class DevicesController : ControllerBase
     {
         private readonly IMediator _mediator;

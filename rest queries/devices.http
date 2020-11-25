@@ -1,28 +1,34 @@
 
 @url = http://localhost:5000/devices
+@auth = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IkFydmkiLCJuYmYiOjE2MDYzMzM2ODcsImV4cCI6MTYwNjMzNzI4NywiaWF0IjoxNjA2MzMzNjg3fQ.7WzLd7AxAVi2M5fCE9O4wniBPEK23SRxnXG-ijUT5xI
+
 
 
 ### Get Devices
 GET {{url}}
+Authorization: {{auth}}
 
 ### Get Devices
 GET {{url}}/device1
+Authorization: {{auth}}
 
 ### Create device
 POST {{url}}
 Content-Type: application/json
+Authorization: {{auth}}
 
 {
     "Id": "device1",
-    "AccountId": "73377209-cfa4-4bcc-afab-1e40be72ddac",
     "Enabled": true
 }
 
 ### Update device
 PUT {{url}}/device1
 Content-Type: application/json
+Authorization: {{auth}}
 
 {
     "Id": "device1",
-    "Enabled": true
+    "Enabled": true,
+    "HasOutsideTemperatureSensor": true
 }

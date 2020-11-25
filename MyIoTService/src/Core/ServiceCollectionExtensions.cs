@@ -18,6 +18,8 @@ namespace MyIoTService.Core
             services.AddHostedService<Initializer>();
             services.AddMediatR(Assembly.GetExecutingAssembly());
 
+            services.AddHttpContextAccessor();
+
             return services;
         }
     }

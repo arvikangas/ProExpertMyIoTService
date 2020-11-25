@@ -6,9 +6,8 @@ using System.Text;
 
 namespace MyIoTService.Core.Commands
 {
-    public class CreateAccount : IRequest
+    public class SignIn : IRequest<TokenDto>
     {
-        public Guid Id { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }
     }

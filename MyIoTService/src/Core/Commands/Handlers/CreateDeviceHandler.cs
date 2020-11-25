@@ -1,10 +1,13 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Http;
 using MyIoTService.Core.Commands;
 using MyIoTService.Core.Dtos;
 using MyIoTService.Core.Services.Mqtt;
 using MyIoTService.Infrastructure.EF;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,15 +18,20 @@ namespace MyIoTService.Core.Commands.Handlers
     {
         private readonly MyIoTDbContext _db;
         private readonly IMqttService _mqttService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public CreateDeviceHandler(MyIoTDbContext db, IMqttService mqttService)
+        public CreateDeviceHandler(MyIoTDbContext db, IMqttService mqttService, IHttpContextAccessor httpContextAccessor)
         {
             _db = db;
             _mqttService = mqttService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         protected async override Task Handle(CreateDevice request, CancellationToken cancellationToken)
         {
+            var userName = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Name);
+            var account = _db.Accounts.First(x => x.UserName == userName);
+
             await _db
                 .Devices
                 .AddAsync(new Domain.Device()
@@ -37,7 +45,7 @@ namespace MyIoTService.Core.Commands.Handlers
                 .AddAsync(new Domain.AccountDevice
                 {
                     DeviceId = request.Id,
-                    AccountId = request.AccountId
+                    AccountId = account.Id
                 });
 
             await _db.SaveChangesAsync();

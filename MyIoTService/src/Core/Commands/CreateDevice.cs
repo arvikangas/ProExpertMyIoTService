@@ -9,7 +9,5 @@ namespace MyIoTService.Core.Commands
     {
         public string Id { get; set; }
         public bool Enabled { get; set; }
-
-        public Guid AccountId { get; set; }
     }
 }

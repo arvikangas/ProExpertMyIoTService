@@ -13,13 +13,6 @@ namespace MyIoTService.Infrastructure.EF.Configurations
         {
             builder
                 .ToTable("accounts");
-
-            builder
-                .HasKey(x => x.Id);
-
-            builder
-                .Property(x => x.Name)
-                .IsRequired();
         }
     }
 }

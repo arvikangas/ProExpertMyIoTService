@@ -26,7 +26,7 @@ namespace MyIoTService.Core.Queries.Handlers
                 .Select(x => new AccountDto
                 {
                     Id = x.Id,
-                    Name = x.Name
+                    Name = x.UserName
                 })
                 .ToListAsync();
 

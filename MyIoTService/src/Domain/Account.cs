@@ -1,10 +1,11 @@
-﻿using System;
+﻿
+using Microsoft.AspNetCore.Identity;
+using System;
 
 namespace MyIoTService.Domain
 {
-    public class Account
+    public class Account : IdentityUser<Guid>
     {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
+
     }
 }

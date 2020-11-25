@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MyIoTService.Core.Commands;
@@ -12,6 +14,7 @@ namespace MyIoTService.Web.Controllers
 {
     [ApiController]
     [Route("accounts")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class AccountsController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -44,11 +47,20 @@ namespace MyIoTService.Web.Controllers
         }
 
         [HttpPost()]
+        [AllowAnonymous]
         public async Task<ActionResult> Post(CreateAccount command)
         {
             command.Id = Guid.NewGuid();
             await _mediator.Send(command);
             return Created($"/users/{command.Id}", null);
+        }
+
+        [HttpPost("login")]
+        [AllowAnonymous]
+        public async Task<ActionResult> SignIn(SignIn command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(result);
         }
 
         [HttpDelete("{id}")]

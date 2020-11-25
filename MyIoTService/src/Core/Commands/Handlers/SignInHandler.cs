@@ -10,6 +10,7 @@ using MyIoTService.Infrastructure.EF;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading;
@@ -17,27 +18,43 @@ using System.Threading.Tasks;
 
 namespace MyIoTService.Core.Commands.Handlers
 {
-    public class CreateAccountHandler : AsyncRequestHandler<CreateAccount>
+    public class SignInHandler : IRequestHandler<SignIn, TokenDto>
     {
         private readonly UserManager<Account> _userManager;
+        private readonly SignInManager<Account> _signInManager;
+        private readonly MyIoTDbContext _db;
         private readonly IOptions<JwtOptions> _jwtoptions;
 
-        public CreateAccountHandler(
+        public SignInHandler(
             UserManager<Account>  userManager,
+            SignInManager<Account> signInManager,
+            MyIoTDbContext db,
             IOptions<JwtOptions> jwtoptions)
         {
             _userManager = userManager;
+            _signInManager = signInManager;
+            _db = db;
             _jwtoptions = jwtoptions;
         }
 
-        protected override async Task Handle(CreateAccount request, CancellationToken cancellationToken)
+        public async Task<TokenDto> Handle(SignIn request, CancellationToken cancellationToken)
         {
-            var account = new Account { UserName = request.UserName };
-            var result = await _userManager.CreateAsync(account, request.Password);
+            var account = _db.Accounts.FirstOrDefault(x => x.UserName == request.UserName);
+            var signInResult = await _signInManager.CheckPasswordSignInAsync(account, request.Password, false);
+
+            if (!signInResult.Succeeded)
+            {
+                return null;
+            }
+
+            var token = GenerateToken(request.UserName);
+            return new TokenDto
+            {
+                Token = token
+            };
         }
 
-
-        private string GenerateToken(Account account)
+        private string GenerateToken(string userName)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_jwtoptions.Value.Secret);
@@ -46,7 +63,7 @@ namespace MyIoTService.Core.Commands.Handlers
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Name, account.UserName.ToString())
+                    new Claim(ClaimTypes.Name, userName)
                 }),
 
                 Expires = DateTime.UtcNow.AddSeconds(3600),

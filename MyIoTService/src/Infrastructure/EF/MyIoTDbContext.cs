@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using MyIoTService.Domain;
 using MyIoTService.Infrastructure.EF.Configurations;
 using System;
@@ -8,9 +10,9 @@ using System.Text;
 
 namespace MyIoTService.Infrastructure.EF
 {
-    public class MyIoTDbContext : DbContext
+    public class MyIoTDbContext : IdentityDbContext<Account, IdentityRole<Guid>, Guid>
     {
-        public MyIoTDbContext(DbContextOptions<MyIoTDbContext> options) : base(options)
+        public MyIoTDbContext(DbContextOptions options) : base(options)
         {
         }
 
@@ -22,6 +24,7 @@ namespace MyIoTService.Infrastructure.EF
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfiguration(new AccountConfiguration());
             modelBuilder.ApplyConfiguration(new AccountDeviceConfiguration());
             modelBuilder.ApplyConfiguration(new DeviceConfiguration());

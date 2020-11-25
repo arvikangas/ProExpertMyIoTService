@@ -14,6 +14,10 @@ using MyIoTService.Core;
 using MyIoTService.Infrastructure;
 using MyIoTService.Infrastructure.EF;
 using MyIoTService.Core.Options;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.AspNetCore.Authentication;
 
 namespace MyIoTService.Web
 {
@@ -34,7 +38,22 @@ namespace MyIoTService.Web
             services.AddInfrastructure();
             services.AddSwaggerGen();
 
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.RequireHttpsMetadata = false;
+                    options.SaveToken = true;
+                    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                    {
+                        ValidateAudience = false,
+                        ValidateIssuer = false,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration["jwt:secret"])),
+                        ClockSkew = TimeSpan.Zero
+                    };
+                });
+
             services.Configure<MqttOptions>(Configuration.GetSection("mqtt"));
+            services.Configure<JwtOptions>(Configuration.GetSection("jwt"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -48,6 +67,8 @@ namespace MyIoTService.Web
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

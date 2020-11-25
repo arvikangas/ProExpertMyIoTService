@@ -1,9 +1,9 @@
 
 @url = http://localhost:5000/accounts
-
-
+@auth = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IkFydmkiLCJuYmYiOjE2MDYxNjU2NDAsImV4cCI6MTYwNjE2OTIzNywiaWF0IjoxNjA2MTY1NjQwfQ.LtWikSqaRhEtJObUkxd23QrWP6DzQPv9AtPquOs0pro
 ### Get accounts
 GET {{url}}
+Authorization: {{auth}}
 
 ### Get account
 GET {{url}}/6aa9dc50-ee96-4603-b031-ea3bd0487fe2
@@ -14,5 +14,15 @@ Content-Type: application/json
 
 {
     "Id": "{{$guid}}",
-    "Name": "Arvi"
+    "UserName": "Arvi",
+    "Password": "secret"
+}
+
+### login
+POST {{url}}/login
+Content-Type: application/json
+
+{
+    "UserName": "Arvi",
+    "Password": "secret"
 }
