@@ -77,6 +77,7 @@ namespace MyIoTService.Core.Services.Mqtt
                             .WithClientOptions(new MqttClientOptionsBuilder()
                                 .WithClientId(_mqttOptions.ClientId)
                                 .WithTcpServer(_mqttOptions.Server)
+                                .WithCredentials(_mqttOptions.User, _mqttOptions.Password)
                                 .Build())
                             .Build();
 
@@ -98,12 +99,10 @@ namespace MyIoTService.Core.Services.Mqtt
             }
         }
 
-        string GetTopic(string deviceId) => $"{_mqttOptions.DevicesTopic}/{deviceId}/send/#";
-
         public async Task Send(string deviceId, int dataType, string payload)
         {
             var topic = $"{_mqttOptions.DevicesTopic}/{deviceId}/receive/{dataType}";
-            await _client.PublishAsync(new MqttApplicationMessageBuilder().WithTopic(topic).WithPayload(payload).Build());
+            var result = await _client.PublishAsync(new MqttApplicationMessageBuilder().WithTopic(topic).WithPayload(payload).Build());
         }
     }
 }

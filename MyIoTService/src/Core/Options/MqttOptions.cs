@@ -9,5 +9,8 @@ namespace MyIoTService.Core.Options
         public string ClientId { get; set; }
         public string Server { get; set; }
         public string DevicesTopic { get; set; }
+        public string User { get; set; }
+        public string Password { get; set; }
+        public string UserCredentialsFileLocation { get; set; }
     }
 }

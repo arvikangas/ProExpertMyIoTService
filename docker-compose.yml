@@ -1,9 +1,13 @@
 version: "3.8"
 services:
-  mosquitto:
-    image: eclipse-mosquitto
+  hivemq:
+    image: hivemq/hivemq-ce
     ports:
       - "1883:1883"
+    volumes:
+      - ./hivemq/data:/opt/hivemq/data
+      - ./hivemq/log:/opt/hivemq/log
+      - ./hivemq/extensions:/opt/hivemq/extensions
   mssql:
     image: mcr.microsoft.com/mssql/server:2019-latest
     ports:

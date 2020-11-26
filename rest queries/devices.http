@@ -1,9 +1,6 @@
 
 @url = http://localhost:5000/devices
-@auth = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IkFydmkiLCJuYmYiOjE2MDYzMzM2ODcsImV4cCI6MTYwNjMzNzI4NywiaWF0IjoxNjA2MzMzNjg3fQ.7WzLd7AxAVi2M5fCE9O4wniBPEK23SRxnXG-ijUT5xI
-
-
-
+@auth = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6InVzZXIiLCJuYmYiOjE2MDY0MjE3NzEsImV4cCI6MTYwNjQyNTM3MSwiaWF0IjoxNjA2NDIxNzcxfQ.CVEBV9KHKEox6rJOjxgOSamA3Nn6EctgO30osLKcAL0
 ### Get Devices
 GET {{url}}
 Authorization: {{auth}}
@@ -18,8 +15,9 @@ Content-Type: application/json
 Authorization: {{auth}}
 
 {
-    "Id": "device1",
-    "Enabled": true
+    "Id": "device2",
+    "Enabled": true,
+    "Password": "secret2"
 }
 
 ### Update device
@@ -30,5 +28,5 @@ Authorization: {{auth}}
 {
     "Id": "device1",
     "Enabled": true,
-    "HasOutsideTemperatureSensor": true
+    "HasOutsideTemperatureSensor": false
 }

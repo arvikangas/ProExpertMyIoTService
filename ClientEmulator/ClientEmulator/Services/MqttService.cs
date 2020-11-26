@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MQTTnet;
 using MQTTnet.Client.Connecting;
+using MQTTnet.Client.Disconnecting;
 using MQTTnet.Client.Options;
 using MQTTnet.Extensions.ManagedClient;
 using System;
@@ -48,6 +49,11 @@ namespace ClientEmulator.Services
             {
                 HandleMqttConnected(e);
             });
+
+            _client.UseDisconnectedHandler(e =>
+            {
+                HandleMqttDisconnected(e);
+            });
         }
 
         public async Task Connect(string deviceId, string password)
@@ -61,6 +67,11 @@ namespace ClientEmulator.Services
                                 .Build())
                             .Build();
 
+
+            if(_client.IsStarted)
+            {
+                await _client.StopAsync();
+            }
 
             await _client.StartAsync(options);
             await SubscribeTopic($"{_mqttOptions.DevicesTopic}/{deviceId}/receive/#");
@@ -100,10 +111,19 @@ namespace ClientEmulator.Services
             }
         }
 
+        private void HandleMqttDisconnected(MqttClientDisconnectedEventArgs e)
+        {
+            using (var scope = _serviceScopeFactory.CreateScope())
+            {
+                var hub = scope.ServiceProvider.GetService<IHubContext<MqttHub>>();
+                hub.Clients.All.SendAsync("Connected", e.ReasonCode.ToString());
+            }
+        }
+
         public async Task Send(string device, string dataType, string payload)
         {
             var topic = $"{_mqttOptions.DevicesTopic}/{device}/send/{dataType}";
-            await _client.PublishAsync(new MqttApplicationMessageBuilder().WithTopic(topic).WithPayload(payload).Build());
+            var result = await _client.PublishAsync(new MqttApplicationMessageBuilder().WithTopic(topic).WithPayload(payload).Build());
         }
 
         public bool IsConnected()

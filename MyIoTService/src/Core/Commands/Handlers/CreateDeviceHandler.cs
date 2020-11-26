@@ -19,12 +19,18 @@ namespace MyIoTService.Core.Commands.Handlers
         private readonly MyIoTDbContext _db;
         private readonly IMqttService _mqttService;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IHiveMqCredentialsService _hiveMqCredentialsService;
 
-        public CreateDeviceHandler(MyIoTDbContext db, IMqttService mqttService, IHttpContextAccessor httpContextAccessor)
+        public CreateDeviceHandler(
+            MyIoTDbContext db, 
+            IMqttService mqttService,
+            IHttpContextAccessor httpContextAccessor,
+            IHiveMqCredentialsService hiveMqCredentialsService)
         {
             _db = db;
             _mqttService = mqttService;
             _httpContextAccessor = httpContextAccessor;
+            _hiveMqCredentialsService = hiveMqCredentialsService;
         }
 
         protected async override Task Handle(CreateDevice request, CancellationToken cancellationToken)
@@ -47,6 +53,8 @@ namespace MyIoTService.Core.Commands.Handlers
                     DeviceId = request.Id,
                     AccountId = account.Id
                 });
+
+            await _hiveMqCredentialsService.AddCredentials(request.Id, request.Password);
 
             await _db.SaveChangesAsync();
 

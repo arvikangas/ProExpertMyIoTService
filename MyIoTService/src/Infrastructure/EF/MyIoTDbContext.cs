@@ -30,6 +30,33 @@ namespace MyIoTService.Infrastructure.EF
             modelBuilder.ApplyConfiguration(new DeviceConfiguration());
             modelBuilder.ApplyConfiguration(new DeviceDataIncomingConfiguration());
             modelBuilder.ApplyConfiguration(new DeviceDataOutgoingConfiguration());
+
+            var passwordhasher = new PasswordHasher<Account>();
+            var account = new Account
+            {
+                UserName = "user",
+                NormalizedUserName = "USER",
+                Id = new Guid("00000000-0000-0000-0000-000000000001"),
+                PasswordHash = passwordhasher.HashPassword(null, "secret"),
+            };
+            modelBuilder.Entity<Account>()
+                .HasData(account);
+
+            var device = new Device
+            {
+                Enabled = true,
+                Id = "device1",
+            };
+            modelBuilder.Entity<Device>()
+                .HasData(device);
+
+            var accountDevice = new AccountDevice
+            {
+                AccountId = account.Id,
+                DeviceId = device.Id
+            };
+            modelBuilder.Entity<AccountDevice>()
+                .HasData(accountDevice);
         }
     }
 }
