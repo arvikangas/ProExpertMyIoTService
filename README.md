@@ -33,6 +33,8 @@ According to assignment main problem is solving high connection count and growth
 * no ui
 * authentication with jwt
 * preseeded account: username: user password: secret. Preseeded device: name: device1, password: device1
+* rest queries are in /rest queries folder. I use visual studio code - rest client extension myself so they are in tha format, but they should be pretty explanatory for any other way to send queries
+#### MyIotService endpoints
 
 ### ClientEmulator
 * ui. Updates with signalr
