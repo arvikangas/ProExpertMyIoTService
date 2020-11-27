@@ -10,9 +10,14 @@
 * Authentication for devices with name and password. Device is authenticatied for mqtt broker, not MyIoTService. Names and passwords are stored in xml.
 * No Tls
 
-## What i did not do but wanted to
-* Better authentication for mqtt broker. Ideally device authentication data would be stored in database, ie. name and hashed password. Implementing that would have required building some plugins for existing mqtt broker. In Java for Hivemq or in C for mosquitto. It can be done, but i ran out of steam at that point and decided to stop. Passwords are also stored as plaintext, not hashes right now. They can be stored as hashes, but that requires you to have java installed and i did not want to add that complexity.
+### Why I added mqtt broker
+According to assignment main problem is solving high connection count and growth of devices. Mqtt has low overhead and built specifically for IoT kind of solution. Assignment did not mention specifically any other component between devices and MyIotService, but i decided to add mqtt broker between them. I spent some time when choosing protocol for device connection, but not for other components. I think that in real life situation all other components can be switched out, like database and MyIoTService. But nobody is going to update thousands of devices in the field. 
+
+### What i did not do, but wanted to, and should exist in real life situation
+* Better authentication for mqtt broker. Ideally device authentication data would be stored in database, ie. name and hashed password. Implementing that would have required building some plugins for existing mqtt broker. In Java for Hivemq or in C for mosquitto. It can be done, but i ran out of steam at that point and decided to stop. Passwords are also stored as plaintext, not hashes right now. They can be stored as hashes, but that requires you to have java installed and i did not want to add that requirement.
 * Dockerize ClientEmulator and MyIoTService. 
+* Tls for mqtt.
+* Tls for MyIotService. Could be added trivially.
 
 ### To Run
 * docker-compose up to run Hivemq and ms sql. Required open ports: 1883 and 1433.
