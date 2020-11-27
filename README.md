@@ -39,3 +39,7 @@ According to assignment main problem is solving high connection count and growth
 ### ClientEmulator
 * ui. Updates with signalr
 * device authentication with name and password
+
+### MyIotService database structure
+NB! since i used asp.net core identity, there are some tables omitted that identity creates by default in database. Accounts table also has some columns that are added by identity that we do not use
+![Database](https://github.com/arvikangas/ProExpertMyIoTService/blob/master/docs/Database.png)
