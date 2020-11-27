@@ -10,6 +10,8 @@
 * Authentication for devices with name and password. Device is authenticatied for mqtt broker, not MyIoTService. Names and passwords are stored in xml.
 * No Tls
 
+![Overview](https://github.com/arvikangas/ProExpertMyIoTService/blob/master/docs/Overview.png)
+
 ### Why I added mqtt broker
 According to assignment main problem is solving high connection count and growth of devices. Mqtt has low overhead and built specifically for IoT kind of solution. Assignment did not mention specifically any other component between devices and MyIotService, but i decided to add mqtt broker between them. I spent some time when choosing protocol for device connection, but not for other components. I think that in real life situation all other components can be switched out, like database and MyIoTService. But nobody is going to update thousands of devices in the field. 
 
