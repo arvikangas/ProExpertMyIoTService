@@ -1,6 +1,6 @@
 
 @url = http://localhost:5000/devices
-@auth = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6InVzZXIiLCJuYmYiOjE2MDY0MjE3NzEsImV4cCI6MTYwNjQyNTM3MSwiaWF0IjoxNjA2NDIxNzcxfQ.CVEBV9KHKEox6rJOjxgOSamA3Nn6EctgO30osLKcAL0
+@auth = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6InVzZXIiLCJuYmYiOjE2MDY0ODc0OTAsImV4cCI6MTYwNjQ5MTA5MCwiaWF0IjoxNjA2NDg3NDkwfQ.iV3_n7hXEJ9epDLPOO5RPKCTIObwe6mDdyYCiMaproU
 ### Get Devices
 GET {{url}}
 Authorization: {{auth}}
@@ -21,12 +21,22 @@ Authorization: {{auth}}
 }
 
 ### Update device
-PUT {{url}}/device1
+PUT {{url}}/device2
 Content-Type: application/json
 Authorization: {{auth}}
 
 {
-    "Id": "device1",
     "Enabled": true,
-    "HasOutsideTemperatureSensor": false
+    "IsOperational": true,
+    "SilentMode": true,
+    "SerialNumber": 1234
+}
+
+### Update device password
+PUT {{url}}/device2/update-password
+Content-Type: application/json
+Authorization: {{auth}}
+
+{
+    "Password": "secret"
 }

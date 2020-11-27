@@ -53,6 +53,14 @@ namespace MyIoTService.Web.Controllers
             return Created($"/devices/{command.Id}", null);
         }
 
+        [HttpPut("{id}/update-password")]
+        public async Task<ActionResult> UpdatePassword([FromRoute]string id, [FromBody]UpdateDevicePassword command)
+        {
+            command.Id = id;
+            await _mediator.Send(command);
+            return NoContent();
+        }
+
         [HttpGet("history-incoming/{id}")]
         public async Task<ActionResult> GetHistoryIncoming([FromRoute] string id, DateTime? from, DateTime? to)
         {

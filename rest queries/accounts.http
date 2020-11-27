@@ -7,22 +7,5 @@ Authorization: {{auth}}
 
 ### Get account
 GET {{url}}/6aa9dc50-ee96-4603-b031-ea3bd0487fe2
+Authorization: {{auth}}
 
-### Create account
-POST {{url}}
-Content-Type: application/json
-
-{
-    "Id": "{{$guid}}",
-    "UserName": "user",
-    "Password": "secret"
-}
-
-### login
-POST {{url}}/login
-Content-Type: application/json
-
-{
-    "UserName": "user",
-    "Password": "secret"
-}

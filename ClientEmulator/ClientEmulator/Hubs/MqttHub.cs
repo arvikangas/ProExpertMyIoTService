@@ -33,5 +33,10 @@ namespace ClientEmulator.Hubs
         {
             await _mqttService.Send(_deviceState.DeviceId, command, value);
         }
+
+        public async Task State(string command, string value)
+        {
+            await Clients.All.SendAsync("State", command, value);
+        }
     }
 }

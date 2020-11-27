@@ -58,19 +58,19 @@ namespace MyIoTService.Core.Commands.Handlers
 
             if (request.IsOperational is { })
             {
-                await _mqttService.Send(device.Id, 1010, request.IsOperational.Value ? "1" : "0");
+                await _mqttService.Send(device.Id, 4040, request.IsOperational.Value ? "1" : "0");
                 device.IsOperational = request.IsOperational.Value;
             }
 
             if (request.SilentMode is { })
             {
-                await _mqttService.Send(device.Id, 1010, request.SilentMode.Value ? "1" : "0");
+                await _mqttService.Send(device.Id, 4050, request.SilentMode.Value ? "1" : "0");
                 device.SilentMode = request.SilentMode.Value;
             }
 
             if (request.SerialNumber is { })
             {
-                await _mqttService.Send(device.Id, 1010, request.SerialNumber.Value.ToString());
+                await _mqttService.Send(device.Id, 9000, request.SerialNumber.Value.ToString());
                 device.SerialNumber = request.SerialNumber.Value;
             }
         }

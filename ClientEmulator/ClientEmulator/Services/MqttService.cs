@@ -24,18 +24,18 @@ namespace ClientEmulator.Services
         private readonly IManagedMqttClient _client;
         private readonly MqttOptions _mqttOptions;
         private readonly IServiceScopeFactory _serviceScopeFactory;
-        private readonly IMediator _mediator;
+        private readonly DeviceState _deviceState;
         private readonly ILogger<MqttService> _logger;
 
         public MqttService(
             IOptions<MqttOptions> mqttOptions,
             ILogger<MqttService> logger,
-            IMediator mediator,
+            DeviceState deviceState,
             IServiceScopeFactory serviceScopeFactory)
         {
             _mqttOptions = mqttOptions.Value;
             _logger = logger;
-            _mediator = mediator;
+            _deviceState = deviceState;
 
             _serviceScopeFactory = serviceScopeFactory;
             _client = new MqttFactory().CreateManagedMqttClient();
@@ -94,11 +94,43 @@ namespace ClientEmulator.Services
 
         private void HandleMqttMessage(MqttApplicationMessageReceivedEventArgs e)
         {
+            var topics = e.ApplicationMessage.Topic.Split('/');
+            var device = topics[1];
+            var command = topics[3];
+            var value = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
+
+            int dataType;
+            if (!int.TryParse(command, out dataType))
+            {
+                _logger.LogInformation("Invalid format for data type {DataType}", command);
+                return;
+            }
+
+            if (!AllowedCodes.Contains(dataType))
+            {
+                _logger.LogInformation("Unknown data type {DataType}", dataType);
+                return;
+            }
+
+            int payLoad;
+            if (string.IsNullOrEmpty(value) || !int.TryParse(value, out payLoad))
+            {
+                _logger.LogInformation("Invalid payload format. Payload: {Payload}", value);
+                return;
+            }
+
+            var limits = CodeMinMax[dataType];
+            if (payLoad < limits.min || payLoad > limits.max)
+            {
+                _logger.LogInformation("Payload out of bounds. Payload: {Payload}, min: {Min}, max: {max}", payLoad, limits.min, limits.max);
+                return;
+            }
+
+            _deviceState.SetProperty(command, payLoad);
             using (var scope = _serviceScopeFactory.CreateScope())
             {
                 var hub = scope.ServiceProvider.GetService<IHubContext<MqttHub>>();
-                var topics = e.ApplicationMessage.Topic.Split('/');
-                hub.Clients.All.SendAsync("Receive", topics[1], topics[3], Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
+                hub.Clients.All.SendAsync("Receive", device, command, value);
             }
         }
 
@@ -122,13 +154,49 @@ namespace ClientEmulator.Services
 
         public async Task Send(string device, string dataType, string payload)
         {
+            _deviceState.SetProperty(dataType, int.Parse(payload));
             var topic = $"{_mqttOptions.DevicesTopic}/{device}/send/{dataType}";
             var result = await _client.PublishAsync(new MqttApplicationMessageBuilder().WithTopic(topic).WithPayload(payload).Build());
+            using (var scope = _serviceScopeFactory.CreateScope())
+            {
+                var hub = scope.ServiceProvider.GetService<IHubContext<MqttHub>>();
+                await hub.Clients.All.SendAsync("DeviceSend", device, dataType, payload);
+            }
         }
 
         public bool IsConnected()
         {
             return _client.IsConnected;
         }
+
+        static HashSet<int> AllowedCodes = new HashSet<int>
+        {
+            1000,
+            1001,
+            1010,
+            1011,
+            1020,
+            2000,
+            2010,
+            4040,
+            4050,
+            8000,
+            9000
+        };
+
+        static Dictionary<int, (int min, int max)> CodeMinMax = new Dictionary<int, (int, int)>
+        {
+            { 1000, (-150, 150) },
+            { 1001, (-100, 100) },
+            { 1010, (-0, 1) },
+            { 1011, (-100, 100) },
+            { 1020, (-100, 100) },
+            { 2000, ( 0, int.MaxValue) },
+            { 2010, ( 0, int.MaxValue) },
+            { 4040, (0, 1) },
+            { 4050, (0, 1) },
+            { 8000, (0, 1) },
+            { 9000, (0, 999999) },
+        };
     }
 }
