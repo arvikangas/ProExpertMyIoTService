@@ -26,7 +26,7 @@ According to assignment main problem is solving high connection count and growth
 * Start MyIoTService. With dotnet run in MyIoTService\src\Web project folder. Required port 5001. App runs in http://localhost:5001.
 * Start Client emulator. With dotnet run in ClientEmulator\ClientEmulator folder.  Required port 5010. App runs in http://localhost:5010.
 * Login to MyIotService or create new account. Use jwt to make requests ie. in http header add Authentication: Bearer myjwttoken
-* Open ClientEmulator UI and connect your device to mqtt broker
+* Open ClientEmulator UI and connect your device to mqtt. Login from ui http://localhost:5010, for example with device1 device1. Mqtt status should turn to "connected". 
 * All ports can be changed, but then you have to make changes in docker-compose file and in app appsettings.json file
 
 ### MyIotService
