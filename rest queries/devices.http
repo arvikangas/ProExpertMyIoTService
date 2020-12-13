@@ -1,6 +1,6 @@
 
 @url = http://localhost:5000/devices
-@auth = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6InVzZXIiLCJuYmYiOjE2MDY0ODc0OTAsImV4cCI6MTYwNjQ5MTA5MCwiaWF0IjoxNjA2NDg3NDkwfQ.iV3_n7hXEJ9epDLPOO5RPKCTIObwe6mDdyYCiMaproU
+@auth = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6InVzZXIiLCJuYmYiOjE2MDY4MDU1NjUsImV4cCI6MTYwNjgwOTE2NCwiaWF0IjoxNjA2ODA1NTY1fQ.CkhcEJFO4jrO9YTbpZ7GV7ARUNfb2FyXmw0OQ81OHaw
 ### Get Devices
 GET {{url}}
 Authorization: {{auth}}
