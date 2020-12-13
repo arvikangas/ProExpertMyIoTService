@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MediatR" Version="9.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
     <PackageReference Include="NSubstitute" Version="4.2.2" />
     <PackageReference Include="Shouldly" Version="4.0.1" />
@@ -17,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Handlers\" />
+    <ProjectReference Include="..\..\src\Core\Core.csproj" />
   </ItemGroup>
 
 </Project>

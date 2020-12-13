@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using MyIoTService.Core.Commands;
 using MyIoTService.Core.Dtos;
+using MyIoTService.Core.Exceptions;
 using MyIoTService.Core.Repositories;
 using MyIoTService.Core.Services.Mqtt;
 using MyIoTService.Domain;
@@ -42,8 +43,23 @@ namespace MyIoTService.Core.Commands.Handlers
 
         protected async override Task Handle(CreateDevice request, CancellationToken cancellationToken)
         {
+            if(string.IsNullOrWhiteSpace(request.Id))
+            {
+                throw new DeviceIdEmptyException();
+            }
+            if (string.IsNullOrWhiteSpace(request.Password))
+            {
+                throw new DevicePasswordEmptyException();
+            }
+
             var userName = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Name);
             var account = await _accountRepository.GetByUserName(userName);
+
+            var existing = await _deviceRepository.Get(request.Id);
+            if(existing is { })
+            {
+                throw new DeviceAlreadyExistsException(request.Id);
+            }
 
             await _deviceRepository.Create(new Domain.Device()
             {
