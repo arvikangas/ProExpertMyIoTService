@@ -30,6 +30,10 @@ namespace MyIoTService.Infrastructure
                 .AddDefaultTokenProviders();
 
             services.AddScoped<IAccountRepository, AccountRepository>();
+            services.AddScoped<IDeviceRepository, DeviceRepository>();
+            services.AddScoped<IAccountDeviceRepository, AccountDeviceRepository>();
+            services.AddScoped<IDeviceDataIncomingRepository, DeviceDataIncomingRepository>();
+            services.AddScoped<IDeviceDataOutgoingRepository, DeviceDataOutgoingRepository>();
 
             return services;
         }

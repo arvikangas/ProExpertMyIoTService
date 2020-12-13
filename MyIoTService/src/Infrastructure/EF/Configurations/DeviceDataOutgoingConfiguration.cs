@@ -25,6 +25,9 @@ namespace MyIoTService.Infrastructure.EF.Configurations
             builder
                 .Property(x => x.TimeStamp)
                 .IsRequired();
+
+            builder
+                .Ignore(x => x.Id);
         }
     }
 }

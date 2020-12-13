@@ -26,6 +26,9 @@ namespace MyIoTService.Infrastructure.EF.Configurations
                 .HasOne(x => x.Device)
                 .WithMany()
                 .HasForeignKey(x => x.DeviceId);
+
+            builder
+                .Ignore(x => x.Id);
         }
     }
 }

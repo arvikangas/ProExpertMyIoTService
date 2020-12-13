@@ -22,6 +22,7 @@ namespace MyIoTService.Infrastructure.EF.Repositories
         public async Task Create(Entity entity)
         {
             await _dbSet.AddAsync(entity);
+            await _db.SaveChangesAsync();
         }
 
         public async Task Delete(T id)
