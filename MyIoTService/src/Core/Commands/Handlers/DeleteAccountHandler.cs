@@ -1,12 +1,5 @@
 ﻿using MediatR;
-using Microsoft.EntityFrameworkCore;
-using MyIoTService.Core.Commands;
-using MyIoTService.Core.Dtos;
-using MyIoTService.Infrastructure.EF;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using MyIoTService.Core.Repositories;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -14,18 +7,16 @@ namespace MyIoTService.Core.Commands.Handlers
 {
     public class DeleteAccountHandler : AsyncRequestHandler<DeleteAccount>
     {
-        private readonly MyIoTDbContext _db;
+        private readonly IAccountRepository _accountRepository;
 
-        public DeleteAccountHandler(MyIoTDbContext db)
+        public DeleteAccountHandler(IAccountRepository accountRepository)
         {
-            _db = db;
+            _accountRepository = accountRepository;
         }
 
         protected async override Task Handle(DeleteAccount request, CancellationToken cancellationToken)
         {
-            var user = await _db.Accounts.FindAsync(request.Id);
-            _db.Accounts.Remove(user);
-            await _db.SaveChangesAsync();
+            await _accountRepository.Delete(request.Id);
         }
     }
 }

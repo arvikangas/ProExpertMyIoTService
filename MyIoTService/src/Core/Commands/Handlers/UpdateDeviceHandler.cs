@@ -1,8 +1,8 @@
 ﻿using MediatR;
 using MyIoTService.Core.Commands;
 using MyIoTService.Core.Dtos;
+using MyIoTService.Core.Repositories;
 using MyIoTService.Core.Services.Mqtt;
-using MyIoTService.Infrastructure.EF;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,21 +13,23 @@ namespace MyIoTService.Core.Commands.Handlers
 {
     public class UpdateDeviceHandler : AsyncRequestHandler<UpdateDevice>
     {
-        private readonly MyIoTDbContext _db;
+        private readonly IDeviceRepository _deviceRepository;
         private readonly IMqttService _mqttService;
 
-        public UpdateDeviceHandler(MyIoTDbContext db, IMqttService mqttService)
+        public UpdateDeviceHandler(
+            IDeviceRepository deviceRepository,
+            IMqttService mqttService)
         {
-            _db = db;
+            _deviceRepository = deviceRepository;
             _mqttService = mqttService;
         }
 
         protected async override Task Handle(UpdateDevice request, CancellationToken cancellationToken)
         {
-            var device = await _db.Devices.FindAsync(request.Id);
+            var device = await _deviceRepository.Get(request.Id);
 
             device.Enabled = request.Enabled;
-            await _db.SaveChangesAsync();
+            await _deviceRepository.Update(device);
 
             if(device.Enabled)
             {

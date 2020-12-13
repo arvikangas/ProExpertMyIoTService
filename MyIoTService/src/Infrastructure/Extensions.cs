@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using MyIoTService.Core.Repositories;
 using MyIoTService.Domain;
 using MyIoTService.Infrastructure.EF;
+using MyIoTService.Infrastructure.EF.Repositories;
 using System;
 
 namespace MyIoTService.Infrastructure
@@ -26,6 +28,8 @@ namespace MyIoTService.Infrastructure
                 })
                 .AddEntityFrameworkStores<MyIoTDbContext>()
                 .AddDefaultTokenProviders();
+
+            services.AddScoped<IAccountRepository, AccountRepository>();
 
             return services;
         }

@@ -2,8 +2,9 @@
 using Microsoft.AspNetCore.Http;
 using MyIoTService.Core.Commands;
 using MyIoTService.Core.Dtos;
+using MyIoTService.Core.Repositories;
 using MyIoTService.Core.Services.Mqtt;
-using MyIoTService.Infrastructure.EF;
+using MyIoTService.Domain;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,18 +17,24 @@ namespace MyIoTService.Core.Commands.Handlers
 {
     public class CreateDeviceHandler : AsyncRequestHandler<CreateDevice>
     {
-        private readonly MyIoTDbContext _db;
+        private readonly IAccountRepository _accountRepository;
+        private readonly IDeviceRepository _deviceRepository;
+        private readonly IAccountDeviceRepository _accountDeviceRepository;
         private readonly IMqttService _mqttService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IHiveMqCredentialsService _hiveMqCredentialsService;
 
         public CreateDeviceHandler(
-            MyIoTDbContext db, 
+            IAccountRepository accountRepository,
+            IDeviceRepository deviceRepository,
+            IAccountDeviceRepository accountDeviceRepository,
             IMqttService mqttService,
             IHttpContextAccessor httpContextAccessor,
             IHiveMqCredentialsService hiveMqCredentialsService)
         {
-            _db = db;
+            _accountRepository = accountRepository;
+            _deviceRepository = deviceRepository;
+            _accountDeviceRepository = accountDeviceRepository;
             _mqttService = mqttService;
             _httpContextAccessor = httpContextAccessor;
             _hiveMqCredentialsService = hiveMqCredentialsService;
@@ -36,27 +43,21 @@ namespace MyIoTService.Core.Commands.Handlers
         protected async override Task Handle(CreateDevice request, CancellationToken cancellationToken)
         {
             var userName = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Name);
-            var account = _db.Accounts.First(x => x.UserName == userName);
+            var account = await _accountRepository.GetByUserName(userName);
 
-            await _db
-                .Devices
-                .AddAsync(new Domain.Device()
-                {
-                    Id = request.Id,
-                    Enabled = request.Enabled
-                });
+            await _deviceRepository.Create(new Domain.Device()
+            {
+                Id = request.Id,
+                Enabled = request.Enabled
+            });
 
-            await _db
-                .AccountDevices
-                .AddAsync(new Domain.AccountDevice
-                {
-                    DeviceId = request.Id,
-                    AccountId = account.Id
-                });
+            await _accountDeviceRepository.Create(new Domain.AccountDevice
+            {
+                DeviceId = request.Id,
+                AccountId = account.Id
+            });
 
             await _hiveMqCredentialsService.AddCredentials(request.Id, request.Password);
-
-            await _db.SaveChangesAsync();
 
             if (request.Enabled)
             {

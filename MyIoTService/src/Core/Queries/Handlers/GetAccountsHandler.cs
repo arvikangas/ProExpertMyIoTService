@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using MyIoTService.Core.Dtos;
-using MyIoTService.Infrastructure.EF;
+using MyIoTService.Core.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,24 +13,23 @@ namespace MyIoTService.Core.Queries.Handlers
 {
     public class UpdateUserHandler : IRequestHandler<GetAccounts, IEnumerable<AccountDto>>
     {
-        private readonly MyIoTDbContext _db;
+        private readonly IAccountRepository _accountRepository;
 
-        public UpdateUserHandler(MyIoTDbContext db)
+        public UpdateUserHandler(IAccountRepository accountRepository)
         {
-            _db = db;
+            _accountRepository = accountRepository;
         }
 
         public async Task<IEnumerable<AccountDto>> Handle(GetAccounts request, CancellationToken cancellationToken)
         {
-            var result = await _db.Accounts
-                .Select(x => new AccountDto
-                {
-                    Id = x.Id,
-                    Name = x.UserName
-                })
-                .ToListAsync();
+            var result = await _accountRepository.GetAll();
+            var dtos = result.Select(x => new AccountDto
+            {
+                Id = x.Id,
+                Name = x.UserName
+            });
 
-            return result;
+            return dtos;
         }
     }
 }

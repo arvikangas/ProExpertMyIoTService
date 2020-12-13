@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MyIoTService.Core.Repositories;
 using MyIoTService.Core.Services.Mqtt;
-using MyIoTService.Infrastructure.EF;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,12 +43,8 @@ namespace MyIoTService.Core.Services
         {
             using (var scope = _serviceScopeFactory.CreateScope())
             {
-                var db = scope.ServiceProvider.GetService<MyIoTDbContext>();
-                var devices = await db
-                    .Devices
-                    .Where(x => x.Enabled)
-                    .Select(x => x.Id)
-                    .ToListAsync();
+                var deviceRepository = scope.ServiceProvider.GetService<IDeviceRepository>();
+                var devices = (await deviceRepository.FindAllEnabled()).Select(x => x.Id);
 
                 if (!devices.Any())
                 {

@@ -5,8 +5,8 @@ using Microsoft.IdentityModel.Tokens;
 using MyIoTService.Core.Commands;
 using MyIoTService.Core.Dtos;
 using MyIoTService.Core.Options;
+using MyIoTService.Core.Repositories;
 using MyIoTService.Domain;
-using MyIoTService.Infrastructure.EF;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -22,24 +22,24 @@ namespace MyIoTService.Core.Commands.Handlers
     {
         private readonly UserManager<Account> _userManager;
         private readonly SignInManager<Account> _signInManager;
-        private readonly MyIoTDbContext _db;
+        private readonly IAccountRepository _accountRepository;
         private readonly IOptions<JwtOptions> _jwtoptions;
 
         public SignInHandler(
             UserManager<Account>  userManager,
             SignInManager<Account> signInManager,
-            MyIoTDbContext db,
+            IAccountRepository accountRepository,
             IOptions<JwtOptions> jwtoptions)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _db = db;
+            _accountRepository = accountRepository;
             _jwtoptions = jwtoptions;
         }
 
         public async Task<TokenDto> Handle(SignIn request, CancellationToken cancellationToken)
         {
-            var account = _db.Accounts.FirstOrDefault(x => x.UserName == request.UserName);
+            var account = await _accountRepository.GetByUserName(request.UserName);
             var signInResult = await _signInManager.CheckPasswordSignInAsync(account, request.Password, false);
 
             if (!signInResult.Succeeded)

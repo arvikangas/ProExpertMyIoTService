@@ -4,7 +4,7 @@ using System.Text;
 
 namespace MyIoTService.Domain
 {
-    public class Device
+    public class Device : IEntity<string>
     {
         public string Id { get; set; }
         public bool Enabled { get; set; }

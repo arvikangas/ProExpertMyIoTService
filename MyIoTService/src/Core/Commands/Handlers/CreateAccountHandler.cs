@@ -6,7 +6,6 @@ using MyIoTService.Core.Commands;
 using MyIoTService.Core.Dtos;
 using MyIoTService.Core.Options;
 using MyIoTService.Domain;
-using MyIoTService.Infrastructure.EF;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;

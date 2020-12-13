@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using MyIoTService.Core.Commands;
 using MyIoTService.Core.Dtos;
-using MyIoTService.Infrastructure.EF;
+using MyIoTService.Core.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,18 +14,18 @@ namespace MyIoTService.Core.Commands.Handlers
 {
     public class UpdateAccountHandler : AsyncRequestHandler<UpdateAccount>
     {
-        private readonly MyIoTDbContext _db;
+        private readonly IAccountRepository _accountRepository;
 
-        public UpdateAccountHandler(MyIoTDbContext db)
+        public UpdateAccountHandler(IAccountRepository accountRepository)
         {
-            _db = db;
+            _accountRepository = accountRepository;
         }
 
         protected async override Task Handle(UpdateAccount request, CancellationToken cancellationToken)
         {
-            var user = await _db.Accounts.FindAsync(request.Id);
+            var user = await _accountRepository.Get(request.Id);
             user.UserName = request.Name;
-            await _db.SaveChangesAsync();
+            await _accountRepository.Update(user);
         }
     }
 }

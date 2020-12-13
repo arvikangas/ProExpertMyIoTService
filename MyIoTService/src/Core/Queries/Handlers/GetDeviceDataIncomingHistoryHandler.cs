@@ -1,7 +1,6 @@
 ﻿using MediatR;
-using Microsoft.EntityFrameworkCore;
 using MyIoTService.Core.Dtos;
-using MyIoTService.Infrastructure.EF;
+using MyIoTService.Core.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,34 +12,19 @@ namespace MyIoTService.Core.Queries.Handlers
 {
     public class GetDeviceDataIncomingHistoryHandler : IRequestHandler<GetDeviceDataIncomingHistory, IEnumerable<DeviceDataDto>>
     {
-        private readonly MyIoTDbContext _db;
+        private readonly IDeviceDataIncomingRepository _deviceDataIncomingRepository;
 
-        public GetDeviceDataIncomingHistoryHandler(MyIoTDbContext db)
+        public GetDeviceDataIncomingHistoryHandler(IDeviceDataIncomingRepository deviceDataIncomingRepository)
         {
-            _db = db;
+            _deviceDataIncomingRepository = deviceDataIncomingRepository;
         }
 
         public async Task<IEnumerable<DeviceDataDto>> Handle(GetDeviceDataIncomingHistory request, CancellationToken cancellationToken)
         {
-            var query = _db
-                .DeviceDataIncoming
-                .AsQueryable();
+            var result = await _deviceDataIncomingRepository.Get(request.Id, request.From, request.To);
+            var dtos = result.Select(x => x.ToDto());
 
-            query = query.Where(x => x.DeviceId == request.Id);
-
-            if(request.From is { })
-            {
-                query = query.Where(x => x.TimeStamp >= request.From.Value);
-            }
-
-            if (request.To is { })
-            {
-                query = query.Where(x => x.TimeStamp <= request.To.Value);
-            }
-
-            var result = await query.Select(x => x.ToDto()).ToListAsync();
-
-            return result;
+            return dtos;
 
         }
     }

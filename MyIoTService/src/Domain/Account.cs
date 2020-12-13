@@ -4,7 +4,7 @@ using System;
 
 namespace MyIoTService.Domain
 {
-    public class Account : IdentityUser<Guid>
+    public class Account : IdentityUser<Guid>, IEntity<Guid>
     {
 
     }

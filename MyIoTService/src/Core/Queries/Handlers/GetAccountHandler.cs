@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using MyIoTService.Core.Dtos;
-using MyIoTService.Infrastructure.EF;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,7 +10,7 @@ namespace MyIoTService.Core.Queries.Handlers
 {
     public class CreateUserHandler : IRequestHandler<GetAccount, AccountDto>
     {
-        public CreateUserHandler(MyIoTDbContext db)
+        public CreateUserHandler()
         {
 
         }

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace MyIoTService.Domain
 {
-    public class DeviceDataIncoming
+    public class DeviceDataIncoming : IEntity<(string, DateTime, int)>
     {
         public string DeviceId { get; set; }
         public Device Device { get; set; }
@@ -12,5 +12,6 @@ namespace MyIoTService.Domain
         public DateTime TimeStamp { get; set; }
         public int DataType { get; set; }
         public int? Value { get; set; }
+        public (string, DateTime, int) Id { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     }
 }

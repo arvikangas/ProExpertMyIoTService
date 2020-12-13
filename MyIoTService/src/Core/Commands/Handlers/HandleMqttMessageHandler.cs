@@ -2,9 +2,9 @@
 using Microsoft.Extensions.Logging;
 using MyIoTService.Core.Commands;
 using MyIoTService.Core.Dtos;
+using MyIoTService.Core.Repositories;
 using MyIoTService.Core.Services.Mqtt;
 using MyIoTService.Domain;
-using MyIoTService.Infrastructure.EF;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -16,14 +16,17 @@ namespace MyIoTService.Core.Commands.Handlers
 {
     public class HandleMqttMessageHandler : AsyncRequestHandler<HandleMqttMessage>
     {
-        private readonly MyIoTDbContext _db;
+        private readonly IDeviceRepository _deviceRepository;
+        private readonly IDeviceDataIncomingRepository _deviceDataIncomingRepository;
         private readonly ILogger<HandleMqttMessageHandler> _logger;
 
         public HandleMqttMessageHandler(
-            MyIoTDbContext db,
+            IDeviceRepository deviceRepository,
+            IDeviceDataIncomingRepository deviceDataIncomingRepository,
             ILogger<HandleMqttMessageHandler> logger)
         {
-            _db = db;
+            _deviceRepository = deviceRepository;
+            _deviceDataIncomingRepository = deviceDataIncomingRepository;
             _logger = logger;
         }
 
@@ -71,7 +74,7 @@ namespace MyIoTService.Core.Commands.Handlers
                 return;
             }
 
-            var device = _db.Devices.Find(deviceId);
+            var device = await _deviceRepository.Get(deviceId);
             if (device is null)
             {
                 _logger.LogInformation("No device with id {Id}", deviceId);
@@ -86,7 +89,7 @@ namespace MyIoTService.Core.Commands.Handlers
                 Value = payLoad
             };
 
-            _db.DeviceDataIncoming.Add(entry);
+            await _deviceDataIncomingRepository.Create(entry);
 
             switch(dataType)
             {
@@ -103,7 +106,6 @@ namespace MyIoTService.Core.Commands.Handlers
                 case 9000: device.SerialNumber = payLoad; break;
                 default: break;
             }
-            await _db.SaveChangesAsync();
         }
 
         static HashSet<int> AllowedCodes = new HashSet<int>

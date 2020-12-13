@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using MyIoTService.Core.Dtos;
-using MyIoTService.Infrastructure.EF;
+using MyIoTService.Core.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,16 +11,16 @@ namespace MyIoTService.Core.Queries.Handlers
 {
     public class GetDeviceHandler : IRequestHandler<GetDevice, DeviceDto>
     {
-        private readonly MyIoTDbContext _db;
+        private readonly IDeviceRepository _deviceRepository;
 
-        public GetDeviceHandler(MyIoTDbContext db)
+        public GetDeviceHandler(IDeviceRepository deviceRepository)
         {
-            _db = db;
+            _deviceRepository = deviceRepository;
         }
 
         public async Task<DeviceDto> Handle(GetDevice request, CancellationToken cancellationToken)
         {
-            var result = await _db.Devices.FindAsync(request.Id);
+            var result = await _deviceRepository.Get(request.Id);
             return result.ToDto();
         }
     }
