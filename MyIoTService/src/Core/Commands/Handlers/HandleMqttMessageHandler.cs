@@ -40,7 +40,6 @@ namespace MyIoTService.Core.Commands.Handlers
             {
                 _logger.LogInformation("Unsupported topic format. {Topic}", request.Topic);
                 return;
-
             }
 
             var deviceId = topics[1];
