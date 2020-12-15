@@ -43,3 +43,7 @@ According to assignment main problem is solving high connection count and growth
 ### MyIotService database structure
 NB! since i used asp.net core identity, there are some tables omitted that identity creates by default in database. Accounts table also has some columns that are added by identity that we do not use
 ![Database](https://github.com/arvikangas/ProExpertMyIoTService/blob/master/docs/Database.png)
+
+### Tests
+* Unit tests with: xunit, NSubstitute, Shoudly. No database connection, repository layer is mocked.
+* (TODO) Integration tests with: Microsoft.AspNetCore.Mvc.Testing and database connection. 
