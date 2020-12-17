@@ -46,4 +46,6 @@ NB! since i used asp.net core identity, there are some tables omitted that ident
 
 ### Tests
 * Unit tests with: xunit, NSubstitute, Shoudly. No database connection, repository layer is mocked.
-* (TODO) Integration tests with: Microsoft.AspNetCore.Mvc.Testing and database connection. 
+* Integration tests with: Microsoft.AspNetCore.Mvc.Testing and database connection. Database uses same server as app, so for integration tests please leave ms sql container running running.
+* Mqtt client is mocked in integration tests. Mqtt testing will need mqtt broker. Existing broker can be used using different topic, for example instead of /devices/device12345/... we can use  /test-devices/device12345/...
+* No end-to-end tests
