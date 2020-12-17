@@ -45,6 +45,7 @@ NB! since i used asp.net core identity, there are some tables omitted that ident
 ![Database](https://github.com/arvikangas/ProExpertMyIoTService/blob/master/docs/Database.png)
 
 ### Tests
+* I have covered with unit tests only two command handlers as example, and in integration tests one controller partially.
 * Unit tests with: xunit, NSubstitute, Shoudly. No database connection, repository layer is mocked.
 * Integration tests with: Microsoft.AspNetCore.Mvc.Testing and database connection. Database uses same server as app, so for integration tests please leave ms sql container running running.
 * Mqtt client is mocked in integration tests. Mqtt testing will need mqtt broker. Existing broker can be used using different topic, for example instead of /devices/device12345/... we can use  /test-devices/device12345/...
