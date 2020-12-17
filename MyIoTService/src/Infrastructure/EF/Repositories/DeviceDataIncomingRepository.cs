@@ -33,5 +33,10 @@ namespace MyIoTService.Infrastructure.EF.Repositories
 
             return await query.ToListAsync();
         }
+
+        public async override Task<DeviceDataIncoming> Get((string, DateTime, int) id)
+        {
+            return await _dbSet.FindAsync(id.Item1, id.Item2, id.Item3);
+        }
     }
 }

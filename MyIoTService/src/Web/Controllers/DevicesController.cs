@@ -35,6 +35,10 @@ namespace MyIoTService.Web.Controllers
         public async Task<ActionResult> Get(string id)
         {
             var result = await _mediator.Send(new GetDevice() { Id = id });
+            if(result is null)
+            {
+                return NotFound();
+            }
             return Ok(result);
         }
 

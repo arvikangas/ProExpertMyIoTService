@@ -105,6 +105,8 @@ namespace MyIoTService.Core.Commands.Handlers
                 case 9000: device.SerialNumber = payLoad; break;
                 default: break;
             }
+
+            await _deviceRepository.Update(device);
         }
 
         static HashSet<int> AllowedCodes = new HashSet<int>

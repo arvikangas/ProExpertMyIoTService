@@ -1,12 +1,12 @@
 
-@url = http://localhost:5000/devices
-@auth = BearereyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6InVzZXIiLCJuYmYiOjE2MDc4ODkyMTUsImV4cCI6MTYwNzg5MjgxNSwiaWF0IjoxNjA3ODg5MjE1fQ.BcohaqLAKWAemgH6RjZSSm60QvKYVlxfUL6wIbCzgVc
+@url = http://localhost:5001/devices
+@auth = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6InVzZXIiLCJuYmYiOjE2MDgyNDE4MDgsImV4cCI6MTYwODI0NTQwOCwiaWF0IjoxNjA4MjQxODA4fQ.nxK16Qszwp6U4MgLpBn2ikiy-TkcxhB3QgOhDUZcEU4
 ### Get Devices
 GET {{url}}
 Authorization: {{auth}}
 
 ### Get Devices
-GET {{url}}/device1
+GET {{url}}/device2
 Authorization: {{auth}}
 
 ### Create device

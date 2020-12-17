@@ -27,12 +27,12 @@ namespace MyIoTService.Infrastructure.EF.Repositories
 
         public async Task Delete(T id)
         {
-            var entity = await _dbSet.FindAsync(id);
+            var entity = await Get(id);
             _dbSet.Remove(entity);
             await _db.SaveChangesAsync();
         }
 
-        public async Task<Entity> Get(T id)
+        public virtual async Task<Entity> Get(T id)
         {
             return await _dbSet.FindAsync(id);
         }

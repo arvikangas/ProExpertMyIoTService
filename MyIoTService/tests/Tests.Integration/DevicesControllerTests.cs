@@ -12,6 +12,7 @@ using Xunit;
 
 namespace MyIoTService.Tests.Integration
 {
+    [Collection("sequence1")]
     public class DevicesControllerTests : IClassFixture<CustomWebApplicationFactory>
     {
         [Fact]

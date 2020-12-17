@@ -14,5 +14,10 @@ namespace MyIoTService.Infrastructure.EF.Repositories
         public AccountDeviceRepository(MyIoTDbContext db) : base(db)
         {
         }
+
+        public async override Task<AccountDevice> Get((Guid, string) id)
+        {
+            return await _dbSet.FindAsync(id.Item1, id.Item2);
+        }
     }
 }
