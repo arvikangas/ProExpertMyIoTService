@@ -12,7 +12,7 @@ namespace MyIoTService.Tests.Integration
         [Fact]
         public async Task homecontroller_should_respond()
         {
-            var resp = await _client.GetAsync("");
+            var resp = await _client.GetAsync("/home");
             resp.ShouldNotBeNull();
             resp.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
         }

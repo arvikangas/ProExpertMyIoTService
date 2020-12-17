@@ -26,13 +26,14 @@ namespace MyIoTService.Core.Services.Mqtt
             IOptions<MqttOptions> mqttOptions,
             ILogger<MqttService> logger,
             IMediator mediator,
-            IServiceScopeFactory serviceScopeFactory)
+            IServiceScopeFactory serviceScopeFactory,
+            IManagedMqttClient managedMqttClient)
         {
             _mqttOptions = mqttOptions.Value;
             _logger = logger;
             _mediator = mediator;
             _serviceScopeFactory = serviceScopeFactory;
-            _client = new MqttFactory().CreateManagedMqttClient();
+            _client = managedMqttClient;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
